@@ -26,21 +26,21 @@ async function setAppointment(data) {
   const isOccupied = await appointmentController.readOne({ time: date });
   if (isOccupied) throw { code: 400, message: "מצטערים, התור תפוס" };
   const formattedDate = new Date(date);
-  // const timestamp = new Date(
-  //   Date.UTC(
-  //     formattedDate.getFullYear(),
-  //     formattedDate.getMonth(),
-  //     formattedDate.getDate(),
-  //     formattedDate.getHours(),
-  //     formattedDate.getMinutes(),
-  //     formattedDate.getSeconds(),
-  //     formattedDate.getMilliseconds()
-  //   )
-  // );
+  const timestamp = new Date(
+    Date.UTC(
+      formattedDate.getFullYear(),
+      formattedDate.getMonth(),
+      formattedDate.getDate(),
+      formattedDate.getHours(),
+      formattedDate.getMinutes(),
+      formattedDate.getSeconds(),
+      formattedDate.getMilliseconds()
+    )
+  );
   appointmentController.create({
     patientName: name,
     phoneNumber: phone,
-    time: formattedDate,
+    time: timestamp,
   });
   return {
     code: 200,
