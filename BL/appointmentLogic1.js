@@ -47,7 +47,7 @@ async function setAppointment(data) {
     message: `התור נקבע בהצלחה לתאריך ${date.slice(
       0,
       10
-    )} בשעה ${formattedDate.getHours()}:${formattedDate.getMinutes()}0
+    )} בשעה ${formattedDate.getHours() + 2}:${formattedDate.getMinutes()}0
   `,
   };
 }
