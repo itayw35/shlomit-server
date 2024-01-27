@@ -1,4 +1,5 @@
 const appointmentController = require("../DL/controllers/appointmentController");
+const axios = require("axios");
 async function getAllAppointments() {
   const today = new Date();
   const appointments = await appointmentController.read(
@@ -42,14 +43,27 @@ async function setAppointment(data) {
     phoneNumber: phone,
     time: timestamp,
   });
+  sendSMS("+972545395029", `${name} מעוניינת לקבוע תור לתאריך${date}`);
   return {
     code: 200,
-    message: `התור נקבע בהצלחה לתאריך ${date.slice(
-      0,
-      10
-    )} בשעה ${formattedDate.getHours() + 2}:${formattedDate.getMinutes()}0
+    message: `התור שקבעת לתאריך ${date.slice(0, 10)} בשעה ${
+      formattedDate.getHours() + 2
+    }:${formattedDate.getMinutes()}0 ממתין לאישור. נודיע לך כשהוא יאושר. יום טוב :-)
   `,
   };
+}
+async function sendSMS(phoneNumber, message) {
+  const url = "https://textbelt.com/text";
+  const params = new URLSearchParams();
+  params.append("phone", phoneNumber);
+  params.append("message", message);
+  params.append("key", "textbelt");
+  try {
+    const response = await axios.post(url, params);
+    console.log(response.data);
+  } catch (err) {
+    console.error("Error sending sms: ", err);
+  }
 }
 module.exports = {
   getAllAppointments,
