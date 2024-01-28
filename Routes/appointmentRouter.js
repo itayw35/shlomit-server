@@ -33,4 +33,12 @@ router.get(
     }
   }
 );
+router.put("/approve-appointment", authJWT, adminAuth, async (req, res) => {
+  try {
+    const appointment = await appointmentLogic.approveAppointment(req.body.id);
+    res.status(appointment.code).send(appointment.message);
+  } catch (err) {
+    res.status(err.code || 400).send(err.message || "something went wrong");
+  }
+});
 module.exports = router;
