@@ -33,9 +33,9 @@ router.get(
     }
   }
 );
-router.put("/approve-appointment", authJWT, adminAuth, async (req, res) => {
+router.put("/update-appointment", authJWT, adminAuth, async (req, res) => {
   try {
-    const appointment = await appointmentLogic.approveAppointment(req.body.id);
+    const appointment = await appointmentLogic.updateAppointment(req.body);
     res.status(appointment.code).send(appointment.message);
   } catch (err) {
     res.status(err.code || 400).send(err.message || "something went wrong");

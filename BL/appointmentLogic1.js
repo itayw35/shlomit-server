@@ -6,7 +6,7 @@ async function getAllAppointments() {
     {
       time: { $gt: today },
     },
-    "time"
+    "time status"
   );
   if (appointments.length === 0)
     throw { code: 400, message: "there are no appointments set" };
@@ -52,13 +52,11 @@ async function setAppointment(data) {
   `,
   };
 }
-async function approveAppointment(id) {
+async function updateAppointment(data) {
+  const { id, status } = data;
   const appointment = await appointmentController.readOne({ _id: id });
   if (!appointment) throw { code: 400, message: "appointment is not found" };
-  await appointmentController.update(
-    { _id: id },
-    { $set: { status: "approved" } }
-  );
+  await appointmentController.update({ _id: id }, { $set: { status: status } });
   return { code: 200, message: "appointment approved" };
 }
 async function sendSMS(phoneNumber, message) {
@@ -78,5 +76,5 @@ module.exports = {
   getAllAppointments,
   setAppointment,
   getAllAppointmentsWithInfo,
-  approveAppointment,
+  updateAppointment,
 };
