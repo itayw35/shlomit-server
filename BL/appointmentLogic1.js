@@ -57,7 +57,7 @@ async function updateAppointment(data) {
   const appointment = await appointmentController.readOne({ _id: id });
   if (!appointment) throw { code: 400, message: "appointment is not found" };
   await appointmentController.update({ _id: id }, { $set: { status: status } });
-  return { code: 200, message: "appointment approved" };
+  return { code: 200, message: `appointment ${status}` };
 }
 async function sendSMS(phoneNumber, message) {
   const url = "https://textbelt.com/text";
