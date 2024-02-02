@@ -1,5 +1,6 @@
 const appointmentController = require("../DL/controllers/appointmentController");
 const axios = require("axios");
+const nodemailer = require("nodemailer")
 async function getAllAppointments() {
   const today = new Date();
   const appointments = await appointmentController.read(
@@ -22,8 +23,8 @@ async function getAllAppointmentsWithInfo() {
   return { code: 200, message: appointments };
 }
 async function setAppointment(data) {
-  const { name, phone, date } = data;
-  if (!name || !phone || !date) throw { code: 400, message: "missing details" };
+  const { name, phone, email ,date } = data;
+  if (!name || !phone || !email || !date) throw { code: 400, message: "missing details" };
   const isOccupied = await appointmentController.readOne({ time: date });
   if (isOccupied) throw { code: 400, message: "מצטערים, התור תפוס" };
   const formattedDate = new Date(date);
@@ -41,9 +42,12 @@ async function setAppointment(data) {
   appointmentController.create({
     patientName: name,
     phoneNumber: phone,
+    email: email,
     time: timestamp,
   });
-  sendSMS("+972545395029", `${name} מעוניינת לקבוע תור לתאריך${date}`);
+  sendEmail(process.env.MAIL_SENDER_USER_NAME, "זימון תור", `מעוניינת לקבוע תור לתאריך ${date.slice(0, 10)} בשעה ${
+    formattedDate.getHours() + 2
+  }:${formattedDate.getMinutes()}0  ${name}`)
   return {
     code: 200,
     message: `התור שקבעת לתאריך ${date.slice(0, 10)} בשעה ${
@@ -58,6 +62,28 @@ async function updateAppointment(data) {
   if (!appointment) throw { code: 400, message: "appointment is not found" };
   await appointmentController.update({ _id: id }, { $set: { status: status } });
   return { code: 200, message: `appointment ${status}` };
+}
+async function sendEmail(recieverMail, mailSubject,mailText){
+  let transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: process.env.MAIL_SENDER_USER_NAME,
+      password: process.env.MAIL_SENDER_PASSWORD
+    }
+  })
+  let mailOptions = {
+    from: `"Admin" ${process.env.MAIL_SENDER_USER_NAME}`,
+    to:recieverMail,
+    subject:mailSubject,
+    text: mailText
+  }
+  transporter.sendMail(mailOptions,
+    (error,info)=> {
+      if(error){
+        return console.log(error);
+      }
+      console.log("Message sent: %s", info.messageId);
+    })
 }
 async function sendSMS(phoneNumber, message) {
   const url = "https://textbelt.com/text";
