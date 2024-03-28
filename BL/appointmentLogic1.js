@@ -44,7 +44,7 @@ async function setAppointment(data) {
     phoneNumber: phone,
     time: timestamp,
   });
-  sendSMS(`${name} מעוניינ/ת לקבוע תור ב${date}`, process.env.MY_PHONE_NUMBER);
+  sendSMS(process.env.MY_PHONE_NUMBER, `${name} מעוניינ/ת לקבוע תור ב${date}`);
   return {
     code: 200,
     message: `התור שקבעת לתאריך ${date.slice(0, 10)} בשעה ${
@@ -92,6 +92,7 @@ async function sendSMS(phoneNumber, message) {
     Message: message,
     PhoneNumber: phoneNumber,
   };
+  const sns = new AWS.SNS({ apiVersion: "2010-03-31" });
   sns.publish(params, function (err, data) {
     if (err) {
       console.log(err);
