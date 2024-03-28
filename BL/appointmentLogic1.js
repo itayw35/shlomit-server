@@ -44,7 +44,7 @@ async function setAppointment(data) {
     phoneNumber: phone,
     time: timestamp,
   });
-  sendSMS(`${name} מעוניינ/ת לקבוע תור ב${date}`);
+  sendSMS(`${name} מעוניינ/ת לקבוע תור ב${date}`, `+972${phone.slice(1)}`);
   return {
     code: 200,
     message: `התור שקבעת לתאריך ${date.slice(0, 10)} בשעה ${
