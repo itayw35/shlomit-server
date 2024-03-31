@@ -82,7 +82,7 @@ async function sendEmail(recieverMail, mailSubject, mailText) {
   });
 }
 async function sendSMS(phoneNumber, message) {
-  AWS.config.update({ region: "il-central-1" });
+  AWS.config.update({ region: "eu-north-1" });
   const credentials = new AWS.Credentials({
     accessKeyId: process.env.SNS_ACCESS_KEY_ID,
     secretAccessKey: process.env.SNS_ACCESS_KEY,
