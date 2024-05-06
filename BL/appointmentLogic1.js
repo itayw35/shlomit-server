@@ -58,6 +58,10 @@ async function updateAppointment(data) {
   const appointment = await appointmentController.readOne({ _id: id });
   if (!appointment) throw { code: 400, message: "appointment is not found" };
   await appointmentController.update({ _id: id }, { $set: { status: status } });
+  sendSMS(
+    `+972${appointment.phoneNumber.slice(1)}`,
+    `התור שקבעת לתאריך ${appointment.time} אושר`
+  );
   return { code: 200, message: `appointment ${status}` };
 }
 async function sendEmail(recieverMail, mailSubject, mailText) {
